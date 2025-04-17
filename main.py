@@ -21,7 +21,7 @@ Open the Terminal in PyCharm (bottom left).
 
 On Windows type:
 python -m pip install -r requirements.txt
-
+CVworthyprojects.py
 On MacOS type:
 pip3 install -r requirements.txt
 
