@@ -12,6 +12,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from forms import CreatePostForm, registerff, loginform, Commentform
 from flask_session import Session
 from functools import wraps
+import smtplib
+import os
+from dotenv import load_dotenv
 '''
 Make sure the required packages are installed: 
 Open the Terminal in PyCharm (bottom left). 
@@ -25,9 +28,8 @@ pip3 install -r requirements.txt
 This will install the packages from the requirements.txt for this project.
 '''
 
-app_secretkey = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 app = Flask(__name__)
-app.config['SECRET_KEY'] = app_secretkey
+app.config['SECRET_KEY'] = os.getenv("app_secretkey")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -256,8 +258,23 @@ def about():
     return render_template("about.html", current_user=current_user)
 
 
-@app.route("/contact")
+load_dotenv()
+
+adr = os.getenv("email")
+passwords = os.getenv("passw")
+
+
+@app.route("/contact", methods=["POST", "GET"])
 def contact():
+    if request.method == "POST":
+        Message = request.form.get("message")
+        body = f"Subject:Website Complaint\n\n{Message}"
+
+        with smtplib.SMTP("smtp.gmail.com") as connect:
+            connect.starttls()
+            connect.login(user=adr, password=passwords)
+            connect.sendmail(from_addr=request.form.get("email"), to_addrs=adr,
+                             msg=body)
     return render_template("contact.html", current_user=current_user)
 
 
